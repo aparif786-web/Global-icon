@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Icon - Ultimate Fix</title>
+    <!-- Firebase SDK (compat version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <style>
+        /* Keep your existing styles - they're perfect */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            background-color: #050510;
+        }
+
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        #gi-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+            padding: 0 16px;
+        }
+
+        .gi-spacer {
+            height: 190px;
+            width: 100%;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: white;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 24px;
+            border-radius: 40px;
+            backdrop-filter: blur(8px);
+            border: 1px solid #00E676;
+            box-shadow: 0 0 25px #00E676;
+            margin-bottom: 6px;
+            text-shadow: 0 0 15px #00E676;
+        }
+
+        .hindi-sub {
+            color: #00E676;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 22px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+            text-shadow: 0 0 10px #00E676;
+        }
+
+        .tagline {
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 400;
+            color: white;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 24px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+            border: 1px solid #00E67680;
+            box-shadow: 0 0 20px #00E67660;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .features {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 14px 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px -8px black;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            text-align: left;
+            border-left: 3px solid #00E676;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+            border-left-width: 4px;
+        }
+
+        .feature-icon {
+            width: 28px;
+            height: 28px;
+            background: rgba(0, 230, 118, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 1px solid #00E676;
+            color: #00E676;
+            box-shadow: 0 0 12px #00E676;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-small {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 2px;
+            color: #b0ffd0;
+        }
+
+        .bottom {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .google-btn {
+            background: white;
+            border-radius: 40px;
+            height: 52px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            box-shadow: 0 0 30px #00E676;
+            border: 1px solid white;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .google-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 35px #00E676;
+        }
+
+        .google-btn img {
+            width: 24px;
+            height: 24px;
+            z-index: 2;
+        }
+
+        .google-btn span:first-of-type {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e1e2f;
+            flex: 1;
+            text-align: left;
+            margin-left: 12px;
+            z-index: 2;
+        }
+
+        .google-btn span:last-of-type {
+            font-size: 24px;
+            color: #2d2d3a;
+            z-index: 2;
+        }
+
+        .btn-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,230,118,0.1);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .terms {
+            text-align: center;
+            font-size: 12px;
+            color: #cccccc;
+            margin-top: 16px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(6px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.3px;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #00E676;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            z-index: 2;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .google-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            border-left: 3px solid #00E676;
+            box-shadow: 0 0 20px #00E676;
+            z-index: 100;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-profile {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 230, 118, 0.1);
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid #00E676;
+            margin-top: 10px;
+            backdrop-filter: blur(8px);
+            pointer-events: auto;
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #00E676;
+        }
+
+        .user-profile span {
+            color: white;
+            font-size: 14px;
+        }
+
+        .sign-out-btn {
+            background: transparent;
+            border: 1px solid #ff4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+
+        .sign-out-btn:hover {
+            background: #ff4444;
+        }
+
+        .domain-warning {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .auth-method-badge {
+            font-size: 10px;
+            background: rgba(0,230,118,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            color: #00E676;
+        }
+
+        @media (max-width: 380px) {
+            .title { font-size: 22px; padding: 6px 18px; }
+            .hindi-sub { font-size: 18px; }
+            .tagline { font-size: 14px; padding: 6px 18px; }
+            .feature-item { font-size: 14px; padding: 12px 16px; }
+            .google-btn { height: 48px; }
+            .google-btn span:first-of-type { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars-canvas"></canvas>
+    <canvas id="gi-canvas"></canvas>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="ui-overlay">
+        <div class="gi-spacer"></div>
+        
+        <div class="content">
+            <div class="domain-warning" id="domainWarning"></div>
+
+            <div class="title">GLOBAL ICON</div>
+            <div class="hindi-sub">ग्लोबल आइकन</div>
+            <div class="tagline">Gyaan Se Aay, Apne Sapne Sajaye! <br> ज्ञान से आय, अपने सपने सजाएं!</div>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-text">World-Class Education <span class="feature-small">· 80+ countries</span></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-text">Gyan Mind - Smart Learning <span class="feature-small">· adaptive</span></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">❤️</div>
+                    <div class="feature-text">10% Charity - Change Lives <span class="feature-small">· 1M+ impacted</span></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🗺️</div>
+                    <div class="feature-text">88+ Countries, 35+ Languages <span class="feature-small">· global reach</span></div>
+                </div>
+            </div>
+
+            <div class="user-profile" id="userProfile">
+                <img id="userPhoto" src="" alt="profile">
+                <span id="userName"></span>
+                <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
+            </div>
+
+            <div class="bottom">
+                <div class="google-btn" id="googleSignIn">
+                    <div class="btn-overlay"></div>
+                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="G">
+                    <span id="btnText">Continue with Google</span>
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <span>→</span>
+                </div>
+                <div class="terms">By continuing, you agree to our Terms & Privacy</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============== CONFIGURATION ===============
+        const firebaseConfig = {
+            apiKey: "AIzaSyCE7Xk1PXuIFNdTU-x37AqFUooJzu7vdj8",
+            authDomain: "muqaddas-technology.firebaseapp.com",
+            databaseURL: "https://muqaddas-technology-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "muqaddas-technology",
+            storageBucket: "muqaddas-technology.firebasestorage.app",
+            messagingSenderId: "312265965405",
+            appId: "1:312265965405:web:2dcab49d02bf65f13272b4"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // 🔥 VERY IMPORTANT FOR ANDROID WEBVIEW - FORCE LOCAL STORAGE
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+            console.log("✅ Persistence set to LOCAL - WebView ready");
+        })
+        .catch((error) => {
+            console.log("❌ Persistence error:", error);
+        });
+        
+        // DOM Elements
+        const googleBtn = document.getElementById('googleSignIn');
+        const btnText = document.getElementById('btnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const toast = document.getElementById('toast');
+        const userProfile = document.getElementById('userProfile');
+        const userPhoto = document.getElementById('userPhoto');
+        const userName = document.getElementById('userName');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const domainWarning = document.getElementById('domainWarning');
+
+        // State
+        let authInProgress = false;
+        const currentDomain = window.location.hostname;
+
+        // =============== ENVIRONMENT DETECTION ===============
+        function isInWebView() {
+            const ua = navigator.userAgent.toLowerCase();
+            return (ua.includes('wv') || 
+                    ua.includes('webview') || 
+                    ua.includes('; wv') ||
+                    /(android).*(version\/\d+\.\d+)(.*)(mobile\s?safari|safari)/i.test(ua) === false ||
+                    (typeof Android !== 'undefined'));
+        }
+
+        // =============== UI HELPER FUNCTIONS ===============
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            toast.style.borderLeftColor = isError ? '#ff4444' : '#00E676';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function showDomainWarning(domain) {
+            domainWarning.style.display = 'block';
+            domainWarning.innerHTML = `
+                <strong>⚠️ Domain not authorized:</strong> "${domain}"<br>
+                <small>Add this domain to Firebase Console:</small><br>
+                <code style="background: rgba(0,0,0,0.5); padding: 5px; display: block; margin: 5px 0;">${domain}</code>
+                <button onclick="copyDomain('${domain}')" style="background: #00E676; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer;">Copy Domain</button>
+                <button onclick="openFirebase()" style="background: #4285f4; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer; margin-left: 5px;">Open Firebase Console</button>
+            `;
+        }
+
+        window.copyDomain = function(domain) {
+            navigator.clipboard.writeText(domain);
+            showToast('✅ Domain copied!', false);
+        };
+
+        window.openFirebase = function() {
+            window.open('https://console.firebase.google.com/project/muqaddas-technology/authentication/providers', '_blank');
+        };
+
+        function updateUIForSignedInUser(user) {
+            btnText.textContent = `Welcome, ${user.displayName.split(' ')[0]}!`;
+            userProfile.style.display = 'flex';
+            userPhoto.src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            userName.textContent = user.displayName;
+            domainWarning.style.display = 'none';
+        }
+
+        // =============== SIMPLIFIED SIGN IN FUNCTION - WEBVIEW SAFE ===============
+        async function signIn() {
+            if (authInProgress) return;
+
+            try {
+                authInProgress = true;
+                googleBtn.classList.add('loading');
+                loadingSpinner.style.display = 'block';
+                btnText.textContent = 'Signing in...';
+
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.setCustomParameters({
+                    prompt: 'select_account'
+                });
+
+                // ✅ WEBVIEW SAFE LOGIN - using popup with LOCAL persistence
+                const result = await auth.signInWithPopup(provider);
+
+                if(result.user){
+                    updateUIForSignedInUser(result.user);
+                    showToast("Welcome " + result.user.displayName);
+                }
+
+            } catch (error) {
+                console.log(error);
+
+                if(error.code === "auth/unauthorized-domain"){
+                    showDomainWarning(currentDomain);
+                    showToast(`❌ Domain not authorized: ${currentDomain}`, true);
+                } else if(error.code === "auth/web-storage-unsupported"){
+                    showToast("Please update your app or use Chrome browser", true);
+                } else if(error.code === "auth/popup-closed-by-user"){
+                    showToast("Login cancelled", true);
+                } else if(error.code === "auth/popup-blocked"){
+                    showToast("Please allow popups for this site", true);
+                } else{
+                    showToast(error.message, true);
+                }
+
+            } finally {
+                authInProgress = false;
+                googleBtn.classList.remove('loading');
+                loadingSpinner.style.display = 'none';
+                btnText.textContent = 'Continue with Google';
+            }
+        }
+
+        // =============== SIGN OUT ===============
+        async function signOut() {
+            try {
+                await auth.signOut();
+                showToast('✅ Signed out successfully');
+                btnText.textContent = 'Continue with Google';
+                userProfile.style.display = 'none';
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showToast('❌ Error signing out', true);
+            }
+        }
+
+        // =============== AUTH STATE OBSERVER ===============
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('✅ User signed in:', user.displayName);
+                updateUIForSignedInUser(user);
+            } else {
+                console.log('👤 User signed out');
+                btnText.textContent = 'Continue with Google';
+                userProfile.style.display = 'none';
+            }
+        });
+
+        // =============== EVENT LISTENERS ===============
+        googleBtn.addEventListener('click', signIn);
+        signOutBtn.addEventListener('click', signOut);
+
+        // Check for existing session
+        if (auth.currentUser) {
+            updateUIForSignedInUser(auth.currentUser);
+        }
+
+        // Initial message
+        showToast(`✅ Ready (${isInWebView() ? 'WebView' : 'Browser'} mode)`, false);
+    </script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.126.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Stars background
+        const starsCanvas = document.getElementById('stars-canvas');
+        const starsRenderer = new THREE.WebGLRenderer({ canvas: starsCanvas, antialias: true });
+        starsRenderer.setSize(window.innerWidth, window.innerHeight);
+        starsRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const starsScene = new THREE.Scene();
+        starsScene.background = new THREE.Color(0x050510);
+
+        const starsCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        starsCamera.position.set(0, 0, 15);
+        starsCamera.lookAt(0, 0, 0);
+
+        // Stars
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 2000;
+        const starsPositions = new Float32Array(starsCount * 3);
+        for (let i = 0; i < starsCount * 3; i += 3) {
+            const r = 50 + Math.random() * 80;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            starsPositions[i] = Math.sin(phi) * Math.cos(theta) * r;
+            starsPositions[i+1] = Math.sin(phi) * Math.sin(theta) * r;
+            starsPositions[i+2] = Math.cos(phi) * r;
+        }
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, blending: THREE.AdditiveBlending });
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        starsScene.add(stars);
+
+        // GI Canvas
+        const giCanvas = document.getElementById('gi-canvas');
+        const giRenderer = new THREE.WebGLRenderer({ canvas: giCanvas, antialias: true, alpha: true });
+        giRenderer.setSize(window.innerWidth, 200);
+        giRenderer.setClearColor(0x000000, 0);
+        giRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const giScene = new THREE.Scene();
+        const giCamera = new THREE.PerspectiveCamera(50, window.innerWidth / 200, 0.1, 1000);
+        giCamera.position.set(0, 1.2, 7);
+        giCamera.lookAt(0, 1.2, 0);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        giScene.add(ambientLight);
+        
+        const light1 = new THREE.PointLight(0x44ffaa, 1.5, 20);
+        light1.position.set(2, 2.5, 4);
+        giScene.add(light1);
+        
+        const light2 = new THREE.PointLight(0x3366ff, 1, 20);
+        light2.position.set(-2, 1.5, 4);
+        giScene.add(light2);
+
+        // GI Group
+        const giGroup = new THREE.Group();
+        giGroup.position.set(0, 1.2, 0);
+
+        // Core sphere
+        const coreGeo = new THREE.SphereGeometry(1.0, 48, 24);
+        const coreMat = new THREE.MeshStandardMaterial({
+            color: 0x00E676,
+            emissive: 0x00aa55,
+            roughness: 0.2,
+            metalness: 0.1,
+        });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        giGroup.add(core);
+
+        // Rings
+        const ringGeo = new THREE.TorusGeometry(1.5, 0.12, 24, 80);
+        const ringMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            emissive: 0x44ccaa,
+            transparent: true,
+            opacity: 0.8
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        ring.rotation.z = 0.3;
+        giGroup.add(ring);
+
+        const ring2Geo = new THREE.TorusGeometry(1.2, 0.08, 20, 60);
+        const ring2Mat = new THREE.MeshStandardMaterial({
+            color: 0x88ffaa,
+            emissive: 0x226633,
+            transparent: true,
+            opacity: 0.7
+        });
+        const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+        ring2.rotation.x = 0.8;
+        ring2.rotation.y = 0.5;
+        giGroup.add(ring2);
+
+        // GI Text
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 128, 128);
+        ctx.font = 'Bold 80px "Segoe UI", "Arial", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#00E676';
+        ctx.shadowBlur = 20;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('GI', 64, 64);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({ map: texture, transparent: true, blending: THREE.AdditiveBlending });
+        const sprite = new THREE.Sprite(material);
+        sprite.scale.set(1.2, 0.6, 0.5);
+        sprite.position.set(0, 1.2, 1.0);
+        giGroup.add(sprite);
+
+        // Particles
+        const particleCount = 120;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            const r = 2.0 + Math.random() * 0.8;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            
+            particlePositions[i*3] = Math.sin(phi) * Math.cos(theta) * r;
+            particlePositions[i*3+1] = Math.sin(phi) * Math.sin(theta) * r * 0.8 + 1.2;
+            particlePositions[i*3+2] = Math.cos(phi) * r;
+        }
+        
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        
+        const particleMat = new THREE.PointsMaterial({ 
+            color: 0x00E676,
+            size: 0.12, 
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        giScene.add(particles);
+
+        giScene.add(giGroup);
+
+        // Animation
+        function animateStars() {
+            requestAnimationFrame(animateStars);
+            stars.rotation.y += 0.0001;
+            starsRenderer.render(starsScene, starsCamera);
+        }
+        
+        function animateGI() {
+            requestAnimationFrame(animateGI);
+            const time = Date.now() * 0.003;
+            
+            giGroup.rotation.y += 0.005;
+            giGroup.rotation.x = Math.sin(time * 0.5) * 0.1;
+            
+            const scale = 1 + Math.sin(time * 3) * 0.02;
+            core.scale.set(scale, scale, scale);
+            
+            giRenderer.render(giScene, giCamera);
+        }
+
+        animateStars();
+        animateGI();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            starsRenderer.setSize(window.innerWidth, window.innerHeight);
+            starsCamera.aspect = window.innerWidth / window.innerHeight;
+            starsCamera.updateProjectionMatrix();
+            
+            giRenderer.setSize(window.innerWidth, 200);
+            giCamera.aspect = window.innerWidth / 200;
+            giCamera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
